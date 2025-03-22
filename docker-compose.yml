@@ -1,0 +1,44 @@
+services:
+  odoo1:
+    image: odoo:latest
+    container_name: odoo1
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+    volumes:
+      - odoo-data:/var/lib/odoo  # Same volume as before
+      - ./addons:/mnt/extra-addons
+    environment:
+      - HOST=db
+      - USER=odoo
+      - PASSWORD=odoo
+
+  odoo2:
+    image: odoo:latest
+    container_name: odoo2
+    depends_on:
+      - db
+    ports:
+      - "8070:8069"
+    volumes:
+      - odoo-data:/var/lib/odoo  # Same volume for shared data
+      - ./addons:/mnt/extra-addons
+    environment:
+      - HOST=db
+      - USER=odoo
+      - PASSWORD=odoo
+
+  db:
+    image: postgres:15
+    container_name: odoo-db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+    volumes:
+      - db-data:/var/lib/postgresql/data  # Preserves database
+
+volumes:
+  db-data:
+  odoo-data:
